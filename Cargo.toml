@@ -1,0 +1,14 @@
+[package]
+name = "falsa"
+version = "0.0.1"
+edition = "2021"
+
+[lib]
+name = "falsa"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.20.0", features = ["extension-module"] }
+arrow = { version = "51.0.0", features = ["pyarrow", "rand"] }
+rand = "0.8.5"
+rand_chacha = "0.3.1"
