@@ -282,11 +282,11 @@ fn generate_join_dataset_medium(
 
     let mut k2x = k2
         .get(0..(n as usize * 9 / 10 / 1_000_000))
-        .expect("internal indexing error with k1")
+        .expect("internal indexing error with k2")
         .to_vec();
     let mut k2r = k2
         .get((n as usize / 1_000_000)..(n as usize * 11 / 10 / 1_000_000))
-        .expect("internal indexing error with k1")
+        .expect("internal indexing error with k2")
         .to_vec();
 
     k2x.append(&mut k2r);
@@ -455,7 +455,7 @@ fn generate_join_dataset_big(
         Field::new("id3", DataType::Int64, true),
         Field::new("id4", DataType::Utf8, false),
         Field::new("id5", DataType::Utf8, false),
-        Field::new("id6", DataType::Utf8, true),
+        Field::new("id6", DataType::Utf8, false),
         Field::new("v2", DataType::Float64, true),
     ]);
 
