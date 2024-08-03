@@ -16,6 +16,9 @@ dependencies = ["pyarrow", "typer", "deltalake"]
 [project.optional-dependencies]
 dev = ["ruff", "ipython"]
 
+[project.scripts]
+falsa = "falsa.app:entry_point"
+
 [tool.ruff]
 line-length = 120
 
