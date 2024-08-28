@@ -1,6 +1,9 @@
+import json
 import random
+import shutil
 from enum import Enum
 from pathlib import Path
+from uuid import uuid4
 
 import pyarrow as pa
 import typer
@@ -18,6 +21,8 @@ from falsa.local_fs import (
     JoinMediumGenerator,
     JoinSmallGenerator,
 )
+
+from .utils import generate_delta_log
 
 help_str = """
 [bold][green]H2O db-like-benchmark data generation.[/green][/bold]\n
@@ -61,12 +66,8 @@ class Format(str, Enum):
 
     def pprint(self):
         print(f"An output format is [green]{self.value}[/green]")
-        if self is Format.DELTA:
-            print("\n[red]Warning![/red]Batch writes are not supported for Delta!")
-            print("The whole dataset will be materialized first!")
-        else:
-            print("\nBatch mode is supported.")
-            print("In case of memory problems you can try to reduce a [green]batch_size[/green].")
+        print("\nBatch mode is supported.")
+        print("In case of memory problems you can try to reduce a [green]batch_size[/green].")
         print()
 
 
@@ -131,9 +132,10 @@ def _create_filename(ds_type: str, n: int, k: int, nas: int, fmt: Format) -> str
 def _clear_prev_if_exists(fp: Path, fmt: Format) -> None:
     if fp.exists():
         # All is file, delta is directory
-        # Delta delete dir by itself.
         if fmt is not Format.DELTA:
             fp.unlink()
+        else:
+            shutil.rmtree(fp, ignore_errors=True)
 
 
 @app.command(help="Create H2O GroupBy Dataset")
@@ -143,12 +145,10 @@ def groupby(
     k: Annotated[int, typer.Option(help="An amount of keys (groups)")] = 100,
     nas: Annotated[int, typer.Option(min=0, max=100, help="A percentage of NULLS")] = 0,
     seed: Annotated[int, typer.Option(min=0, help="A seed of the generation")] = 42,
-    batch_size: Annotated[
-        int, typer.Option(min=0, help="A batch-size (in rows)")
-    ] = 5_000_000,
+    batch_size: Annotated[int, typer.Option(min=0, help="A batch-size (in rows)")] = 5_000_000,
     data_format: Annotated[
         Format,
-        typer.Option(help="An output format for generated data. DELTA requires materialization of the whole data!"),
+        typer.Option(help="An output format for generated data."),
     ] = Format.CSV,
 ):
     gb = GroupByGenerator(size._to(), k, nas, seed, batch_size)
@@ -196,7 +196,14 @@ def groupby(
         writer.close()
 
     if data_format is Format.DELTA:
-        write_deltalake(output_filepath, data=gb.iter_batches(), schema=schema)
+        output_filepath.mkdir(parents=True)
+        delta_file_pq = output_filepath.joinpath("data.parquet")
+        writer = parquet.ParquetWriter(where=delta_file_pq, schema=schema)
+        for batch in track(gb.iter_batches(), total=len(gb.batches)):
+            writer.write_batch(batch)
+
+        writer.close()
+        generate_delta_log(output_filepath, schema)
 
 
 @app.command(help="Create three H2O join datasets")
@@ -206,12 +213,10 @@ def join(
     k: Annotated[int, typer.Option(help="An amount of keys (groups)")] = 10,
     nas: Annotated[int, typer.Option(min=0, max=100, help="A percentage of NULLS")] = 0,
     seed: Annotated[int, typer.Option(min=0, help="A seed of the generation")] = 42,
-    batch_size: Annotated[
-        int, typer.Option(min=0, help="A batch-size (in rows)")
-    ] = 5_000_000,
+    batch_size: Annotated[int, typer.Option(min=0, help="A batch-size (in rows)")] = 5_000_000,
     data_format: Annotated[
         Format,
-        typer.Option(help="An output format for generated data. DELTA requires materialization of the whole data!"),
+        typer.Option(help="An output format for generated data."),
     ] = Format.CSV,
 ):
     random.seed(seed)
@@ -298,7 +303,14 @@ def join(
         writer.close()
 
     if data_format is Format.DELTA:
-        write_deltalake(output_small, data=join_small.iter_batches(), schema=schema_small)
+        output_small.mkdir(parents=True)
+        delta_file_pq = output_small.joinpath("data.parquet")
+        writer = parquet.ParquetWriter(where=delta_file_pq, schema=schema_small)
+        for batch in track(join_small.iter_batches(), total=len(join_small.batches)):
+            writer.write_batch(batch)
+
+        writer.close()
+        generate_delta_log(output_small, schema_small)
 
     print()
     print("An [bold]MEDIUM[/bold] data [green]schema[/green] is the following:")
@@ -320,7 +332,14 @@ def join(
         writer.close()
 
     if data_format is Format.DELTA:
-        write_deltalake(output_medium, data=join_medium.iter_batches(), schema=schema_medium)
+        output_medium.mkdir(parents=True)
+        delta_file_pq = output_medium.joinpath("data.parquet")
+        writer = parquet.ParquetWriter(where=delta_file_pq, schema=schema_medium)
+        for batch in track(join_medium.iter_batches(), total=len(join_medium.batches)):
+            writer.write_batch(batch)
+
+        writer.close()
+        generate_delta_log(output_medium, schema_medium)
 
     print()
     print("An [bold]BIG[/bold] data [green]schema[/green] is the following:")
@@ -342,7 +361,14 @@ def join(
         writer.close()
 
     if data_format is Format.DELTA:
-        write_deltalake(output_big, data=join_big.iter_batches(), schema=schema_big)
+        output_big.mkdir(parents=True)
+        delta_file_pq = output_big.joinpath("data.parquet")
+        writer = parquet.ParquetWriter(where=delta_file_pq, schema=schema_big)
+        for batch in track(join_big.iter_batches(), total=len(join_big.batches)):
+            writer.write_batch(batch)
+
+        writer.close()
+        generate_delta_log(output_big, schema_big)
 
 
 def entry_point() -> None:
