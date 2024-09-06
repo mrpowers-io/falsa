@@ -46,7 +46,15 @@ maturin develop --release
 falsa --help
 ```
 
-## h2o groupby dataset
+## h2o datasets
+
+The h2o datasets are used to benchmark query engines on a single machine, [see here](https://duckdblabs.github.io/db-benchmark/).
+
+Here are [the original R Scripts](https://github.com/duckdblabs/db-benchmark/tree/main/_data) to generate the sample datasets.  These still work if you know how to run R (the large dataset generation can error out if you machine doesn't have sufficient memory).
+
+falsa is good if you want to generate these datasets with a Python interface or if you are facing memory issues with the R scripts.
+
+### h2o groupby dataset
 
 The h2o groupby dataset has 9 columns and 10 million/100 million/1 billion rows of data.
 
