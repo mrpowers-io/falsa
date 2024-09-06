@@ -1,13 +1,10 @@
-import json
 import random
 import shutil
 from enum import Enum
 from pathlib import Path
-from uuid import uuid4
 
 import pyarrow as pa
 import typer
-from deltalake import write_deltalake
 from pyarrow import csv, parquet
 from rich import print
 from rich.progress import track
