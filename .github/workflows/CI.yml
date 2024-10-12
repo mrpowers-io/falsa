@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   linux:
@@ -40,6 +41,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
+      - name: Update version
+        if: "startsWith(github.ref, 'refs/tags/')"
+        run:
+          sed 's/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -71,6 +76,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
+      - name: Update version
+        if: "startsWith(github.ref, 'refs/tags/')"
+        run:
+          sed 's/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -99,6 +108,10 @@ jobs:
         with:
           python-version: 3.x
           architecture: ${{ matrix.platform.target }}
+      - name: Update version
+        if: "startsWith(github.ref, 'refs/tags/')"
+        run:
+          sed 's/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -125,6 +138,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
+      - name: Update version
+        if: "startsWith(github.ref, 'refs/tags/')"
+        run:
+          sed 's/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -152,17 +169,15 @@ jobs:
           name: wheels-sdist
           path: dist
 
-#  release:
-#    name: Release
-#    runs-on: ubuntu-latest
-#    if: "startsWith(github.ref, 'refs/tags/')"
-#    needs: [linux, musllinux, windows, macos, sdist]
-#    steps:
-#      - uses: actions/download-artifact@v4
-#      - name: Publish to PyPI
-#        uses: PyO3/maturin-action@v1
-#        env:
-#          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-#        with:
-#          command: upload
-#          args: --non-interactive --skip-existing wheels-*/*
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: "startsWith(github.ref, 'refs/tags/')"
+    needs: [linux, musllinux, windows, macos, sdist]
+    steps:
+      - uses: actions/download-artifact@v4
+      - name: Publish to PyPI
+        uses: PyO3/maturin-action@v1
+        with:
+          command: upload
+          args: --non-interactive --skip-existing wheels-*/*
