@@ -141,7 +141,7 @@ jobs:
       - name: Update version
         if: "startsWith(github.ref, 'refs/tags/')"
         run:
-          sed -i '0,/version/s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
+          sed -i '' '0,/version/s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
