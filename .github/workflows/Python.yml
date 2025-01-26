@@ -49,7 +49,8 @@ jobs:
           manylinux: auto
       - name: Run tests
         run: |
-          .venv/bin/python tests/tests_main.py
+          . .venv/bin/activate
+          python tests/tests_main.py
       - name: Install Ruff
         uses: astral-sh/ruff-action@v3
         with:
