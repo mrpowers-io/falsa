@@ -74,3 +74,4 @@ docs/_build/
 
 # tmp generation
 tmp
+*.csv
