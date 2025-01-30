@@ -1,0 +1,58 @@
+name: Python
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  linux:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-latest
+            target: x86_64
+          - runner: ubuntu-latest
+            target: x86
+          - runner: ubuntu-latest
+            target: aarch64
+          - runner: ubuntu-latest
+            target: armv7
+          - runner: ubuntu-latest
+            target: s390x
+          - runner: ubuntu-latest
+            target: ppc64le
+        python:
+          - version: "3.9"
+          - version: "3.10"
+          - version: "3.11"
+          - version: "3.12"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python.version }}
+      - name: Create venv
+        run: |
+          python -m venv .venv
+      - name: Install project
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          command: develop
+          args: --release
+          sccache: 'true'
+          manylinux: auto
+      - name: Run tests
+        run: |
+          . .venv/bin/activate
+          python tests/tests_main.py
+      - name: Install Ruff
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: "format --check"
+

@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 import random
 from typing import Iterator
 
@@ -32,7 +35,7 @@ class GroupByGenerator:
     """
 
     def __init__(
-            self, size: H2ODatasetSizes | int, k: int, nas: int = 0, seed: int = 42, batch_size: int = 5_000_000
+        self, size: H2ODatasetSizes | int, k: int, nas: int = 0, seed: int = 42, batch_size: int = 5_000_000
     ) -> None:
         _validate_int64(size, "size")
         if (nas < 0) or (nas > 100):
@@ -68,7 +71,13 @@ class JoinSmallGenerator:
     """
 
     def __init__(
-            self, size: H2ODatasetSizes | int, n_rows: int, k: int, seed: int = 42, keys_seed: int = 142, batch_size: int = 5_000_000
+        self,
+        size: H2ODatasetSizes | int,
+        n_rows: int,
+        k: int,
+        seed: int = 42,
+        keys_seed: int = 142,
+        batch_size: int = 5_000_000,
     ) -> None:
         _validate_int64(size, "size")
         if (k < 0) or (k > size):
@@ -103,7 +112,13 @@ class JoinMediumGenerator:
     """
 
     def __init__(
-            self, size: H2ODatasetSizes | int, n_rows: int, k: int, seed: int = 42, keys_seed: int = 142, batch_size: int = 5_000_000
+        self,
+        size: H2ODatasetSizes | int,
+        n_rows: int,
+        k: int,
+        seed: int = 42,
+        keys_seed: int = 142,
+        batch_size: int = 5_000_000,
     ) -> None:
         _validate_int64(size, "size")
         if (k < 0) or (k > size):
@@ -138,7 +153,14 @@ class JoinBigGenerator:
     """
 
     def __init__(
-            self, size: H2ODatasetSizes | int, n_rows: int, k: int, nas: int, seed: int = 42, keys_seed: int = 142, batch_size: int = 5_000_000
+        self,
+        size: H2ODatasetSizes | int,
+        n_rows: int,
+        k: int,
+        nas: int,
+        seed: int = 42,
+        keys_seed: int = 142,
+        batch_size: int = 5_000_000,
     ) -> None:
         _validate_int64(size, "size")
         if (k < 0) or (k > size):

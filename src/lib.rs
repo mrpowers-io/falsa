@@ -477,7 +477,7 @@ fn generate_join_dataset_big(
 }
 
 #[pymodule]
-fn native(_py: Python, m: &PyModule) -> PyResult<()> {
+fn native(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(generate_groupby, m)?)?;
     m.add_function(wrap_pyfunction!(generate_join_dataset_small, m)?)?;
     m.add_function(wrap_pyfunction!(generate_join_dataset_medium, m)?)?;
