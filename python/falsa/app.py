@@ -136,7 +136,9 @@ def join(
     print("An [bold]SMALL[/bold] data [green]schema[/green] is the following:")
     print(Schemas.JOIN_RHS_SMALL.value)
     print()
-    writer_small = get_writer(output_filepath=output_small, data_format=data_format, schema=Schemas.JOIN_RHS_SMALL.value)
+    writer_small = get_writer(
+        output_filepath=output_small, data_format=data_format, schema=Schemas.JOIN_RHS_SMALL.value
+    )
 
     for batch in track(join_small.iter_batches(), total=len(join_small.batches)):
         writer_small.write_batch(batch)
@@ -150,7 +152,9 @@ def join(
     print(Schemas.JOIN_RHS_MEDIUM.value)
     print()
 
-    writer_medium = get_writer(output_filepath=output_medium, data_format=data_format, schema=Schemas.JOIN_RHS_MEDIUM.value)
+    writer_medium = get_writer(
+        output_filepath=output_medium, data_format=data_format, schema=Schemas.JOIN_RHS_MEDIUM.value
+    )
 
     for batch in track(join_medium.iter_batches(), total=len(join_medium.batches)):
         writer_medium.write_batch(batch)
