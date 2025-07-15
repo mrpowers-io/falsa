@@ -12,11 +12,20 @@ use arrow::{
     datatypes::{DataType, Field, Schema},
     pyarrow::PyArrowType,
 };
+use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
-use rand::distributions::Uniform;
-use rand::{distributions::Distribution, SeedableRng};
+use rand::distr::Uniform;
+use rand::{distr::Distribution, SeedableRng};
 use rand_chacha::ChaCha8Rng;
 use std::sync::Arc;
+
+#[derive(Debug)]
+struct UniformError(rand::distr::uniform::Error);
+impl From<UniformError> for PyErr {
+    fn from(error: UniformError) -> Self {
+        PyErr::new::<PyValueError, _>(format!("{:?}", error))
+    }
+}
 
 /**
 Generate H2O group-by dataset.
@@ -48,12 +57,12 @@ fn generate_groupby(
     seed: i64,
     batch_size: i64,
 ) -> PyResult<PyArrowType<RecordBatch>> {
-    let distr_k = Uniform::<i64>::try_from(1..=k)?;
-    let distr_nk = Uniform::<i64>::try_from(1..=(n / k))?;
-    let distr_5 = Uniform::<i64>::try_from(1..=5)?;
-    let distr_15 = Uniform::<i64>::try_from(1..=15)?;
-    let distr_float = Uniform::<f64>::try_from(0.0..=100.0)?;
-    let distr_nas = Uniform::<i64>::try_from(0..=100)?;
+    let distr_k = Uniform::<i64>::try_from(1..=k).map_err(|e| UniformError(e))?;
+    let distr_nk = Uniform::<i64>::try_from(1..=(n / k)).map_err(|e| UniformError(e))?;
+    let distr_5 = Uniform::<i64>::try_from(1..=5).map_err(|e| UniformError(e))?;
+    let distr_15 = Uniform::<i64>::try_from(1..=15).map_err(|e| UniformError(e))?;
+    let distr_float = Uniform::<f64>::try_from(0.0..=100.0).map_err(|e| UniformError(e))?;
+    let distr_nas = Uniform::<i64>::try_from(0..=100).map_err(|e| UniformError(e))?;
     let mut rng = ChaCha8Rng::seed_from_u64(seed as u64);
 
     let item_capacity = batch_size as usize; // validataion is on the python side
@@ -157,7 +166,7 @@ fn generate_join_lhs(
     let k2_array = Int64Array::try_from(k2.0)?;
     let k3_array = Int64Array::try_from(k3.0)?;
     let mut rng = ChaCha8Rng::seed_from_u64(seed as u64);
-    let distr_float = Uniform::<f64>::try_from(1.0..=100.0)?;
+    let distr_float = Uniform::<f64>::try_from(1.0..=100.0).map_err(|e| UniformError(e))?;
     let item_capacity = batch_size as usize; // validation is on the python side
 
     assert!(
@@ -231,7 +240,7 @@ fn generate_join_rhs_small(
 ) -> PyResult<PyArrowType<RecordBatch>> {
     let k1_array = Int64Array::try_from(k1.0)?;
     let mut rng = ChaCha8Rng::seed_from_u64(seed as u64);
-    let distr_float = Uniform::<f64>::try_from(1.0..=100.0)?;
+    let distr_float = Uniform::<f64>::try_from(1.0..=100.0).map_err(|e| UniformError(e))?;
     let item_capacity = batch_size as usize; // validation is on the python side
 
     assert!(
@@ -281,7 +290,7 @@ fn generate_join_rhs_medium(
     let k1_array: Int64Array = Int64Array::try_from(k1.0)?;
     let k2_array: Int64Array = Int64Array::try_from(k2.0)?;
     let mut rng = ChaCha8Rng::seed_from_u64(seed as u64);
-    let distr_float = Uniform::<f64>::try_from(1.0..=100.0)?;
+    let distr_float = Uniform::<f64>::try_from(1.0..=100.0).map_err(|e| UniformError(e))?;
     let item_capacity = batch_size as usize; // validation is on the python side
 
     assert!(
@@ -352,7 +361,7 @@ fn generate_join_rhs_big(
     let k2_array: Int64Array = Int64Array::try_from(k2.0)?;
     let k3_array: Int64Array = Int64Array::try_from(k3.0)?;
     let mut rng = ChaCha8Rng::seed_from_u64(seed as u64);
-    let distr_float = Uniform::<f64>::try_from(1.0..=100.0)?;
+    let distr_float = Uniform::<f64>::try_from(1.0..=100.0).map_err(|e| UniformError(e))?;
     let item_capacity = batch_size as usize; // validation is on the python side
 
     assert!(
