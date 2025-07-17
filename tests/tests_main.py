@@ -27,4 +27,21 @@ if __name__ == "__main__":
         sys.stdout.flush()
         sys.exit(1)
 
+    # Test main functionality with parquet files
+    command_gb = ["falsa", "groupby", "--path-prefix", "./", "--data-format", "PARQUET"]
+    proc_gb = Popen(command_gb, stdout=PIPE, stderr=STDOUT)
+    res_gb = proc_gb.communicate()
+    if proc_gb.returncode != 0:
+        sys.stdout.write("Error in groupby parquet")
+        sys.stdout.flush()
+        sys.exit(1)
+
+    command_join = ["falsa", "join", "--path-prefix", "./", "--data-format", "PARQUET"]
+    proc_join = Popen(command_join, stdout=PIPE, stderr=STDOUT)
+    res_join = proc_join.communicate()
+    if proc_join.returncode != 0:
+        sys.stdout.write("Error in join parquet")
+        sys.stdout.flush()
+        sys.exit(1)
+
     sys.exit(0)
