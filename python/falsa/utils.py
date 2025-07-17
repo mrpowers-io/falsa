@@ -76,26 +76,26 @@ class Schemas(Enum):
             ("id1", pa.int64(), False),
             ("id2", pa.int64(), False),
             ("id3", pa.int64(), False),
-            ("id4", pa.utf8()),
-            ("id5", pa.utf8()),
-            ("id6", pa.utf8()),
-            ("v1", pa.float64()),
+            ("id4", pa.utf8(), False),
+            ("id5", pa.utf8(), False),
+            ("id6", pa.utf8(), False),
+            ("v1", pa.float64(), False),
         ]
     )
     JOIN_RHS_SMALL = pa.schema(
         [
             ("id1", pa.int64(), False),
-            ("id4", pa.utf8()),
-            ("v2", pa.float64()),
+            ("id4", pa.utf8(), False),
+            ("v2", pa.float64(), False),
         ]
     )
     JOIN_RHS_MEDIUM = pa.schema(
         [
             ("id1", pa.int64(), False),
             ("id2", pa.int64(), False),
-            ("id4", pa.utf8()),
-            ("id5", pa.utf8()),
-            ("v2", pa.float64()),
+            ("id4", pa.utf8(), False),
+            ("id5", pa.utf8(), False),
+            ("v2", pa.float64(), False),
         ]
     )
     JOIN_RHS_BIG = pa.schema(
@@ -103,10 +103,10 @@ class Schemas(Enum):
             ("id1", pa.int64(), False),
             ("id2", pa.int64(), False),
             ("id3", pa.int64(), False),
-            ("id4", pa.utf8()),
-            ("id5", pa.utf8()),
-            ("id6", pa.utf8()),
-            ("v2", pa.float64()),
+            ("id4", pa.utf8(), False),
+            ("id5", pa.utf8(), False),
+            ("id6", pa.utf8(), False),
+            ("v2", pa.float64(), False),
         ]
     )
 
