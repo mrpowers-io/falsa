@@ -1,6 +1,53 @@
 # falsa
 
-falsa makes it easy to generate sample datasets.
+An unofficial re-implementation of the [H2O DB-like OPS benchmark](https://github.com/duckdblabs/db-benchmark) datasets
+generators but in Rust. While the original R scripts are great, they are memory intensive and does not provide a simple
+way to run them. False provides a ready to use Python CLI app with a Rust backend and an ability of the out-of-core
+generation.
+
+![PyPI - Downloads](https://img.shields.io/pypi/dm/falsa) ![PyPI - License](https://img.shields.io/pypi/l/falsa) ![PyPI - Version](https://img.shields.io/pypi/v/falsa)
+
+## Installation
+
+### Pip install
+
+```bash
+pip install falsa
+```
+
+## Usage
+
+```bash
+falsa --help
+```
+
+```                                                                                                                                           
+ Usage: falsa [OPTIONS] COMMAND [ARGS]...                                                                                                         
+                                                                                                                                                  
+ H2O db-like-benchmark data generation.                                                                                                           
+ This implementation is unofficial!                                                                                                               
+ For the official implementation please check https://github.com/duckdblabs/db-benchmark/tree/main/_data                                          
+                                                                                                                                                  
+ Available commands are:                                                                                                                          
+ - groupby: generate GroupBy dataset;                                                                                                             
+ - join: generate three Join datasets (small, medium, big);                                                                                       
+                                                                                                                                                  
+                                                                                                                                                  
+ Author: github.com/SemyonSinchenko                                                                                                               
+ Source code: https://github.com/mrpowers-io/falsa                                                                                                
+                                                                                                                                                  
+╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --install-completion          Install completion for the current shell.                                                                        │
+│ --show-completion             Show completion for the current shell, to copy it or customize the installation.                                 │
+│ --help                        Show this message and exit.                                                                                      │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ groupby   Create H2O GroupBy Dataset                                                                                                           │
+│ join      Create three H2O join datasets                                                                                                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+## Simple example
 
 Here is how to generate a Parquet file with 100 million rows and 9 columns of data for example:
 
@@ -26,33 +73,17 @@ Here are the first three rows of data in the file:
 
 With falsa, you can generate many sample datasets.
 
-## Installation
-
-### Pip install
-
-In virtualenv with python 3.9+:
-
-```sh
-pip install git+https://github.com/mrpowers-io/falsa.git@main
-falsa --help
-```
-
-### Maturin build
-
-In virtualenv with python 3.9+:
-
-```sh
-maturin develop --release
-falsa --help
-```
-
 ## h2o datasets
 
-The h2o datasets are used to benchmark query engines on a single machine, [see here](https://duckdblabs.github.io/db-benchmark/).
+The h2o datasets are used to benchmark query engines on a single
+machine, [see here](https://duckdblabs.github.io/db-benchmark/).
 
-Here are [the original R Scripts](https://github.com/duckdblabs/db-benchmark/tree/main/_data) to generate the sample datasets.  These still work if you know how to run R (the large dataset generation can error out if you machine doesn't have sufficient memory).
+Here are [the original R Scripts](https://github.com/duckdblabs/db-benchmark/tree/main/_data) to generate the sample
+datasets. These still work if you know how to run R (the large dataset generation can error out if you machine doesn't
+have sufficient memory).
 
-falsa is good if you want to generate these datasets with a Python interface or if you are facing memory issues with the R scripts.
+falsa is good if you want to generate these datasets with a Python interface or if you are facing memory issues with the
+R scripts.
 
 ### h2o groupby dataset
 
@@ -104,4 +135,5 @@ Here's the detailed description of the table:
 └────────────┴───────────┴───────────┴──────────────┴───────────┴───┴───────────────┴──────────┴───────────┴───────────┘
 ```
 
-The h2o dataset is useful for group by benchmarks.  For example, you can use id1 to do an aggregation on a low cardinality column and id3 to do an aggreation on a high cardinality column.
+The h2o dataset is useful for group by benchmarks. For example, you can use id1 to do an aggregation on a low
+cardinality column and id3 to do an aggreation on a high cardinality column.

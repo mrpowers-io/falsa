@@ -4,6 +4,12 @@ build-backend = "maturin"
 
 [project]
 name = "falsa"
+license = "Apache 2.0"
+description = "Unofficial Rust-based implementation of H2O benchmark dataset generation"
+maintainers = [
+    { name = "Sem", email = "ssinchenko@apache.org" },
+]
+readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Rust",
