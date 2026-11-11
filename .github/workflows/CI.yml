@@ -10,7 +10,7 @@ on:
     branches:
       - main
     tags:
-      - '*'
+      - "*"
   pull_request:
   workflow_dispatch:
 
@@ -37,23 +37,22 @@ jobs:
           - runner: ubuntu-latest
             target: ppc64le
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version-file: ".python-version"
       - name: Update version
         if: "startsWith(github.ref, 'refs/tags/')"
-        run:
-          sed -i '0,/version/s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
+        run: sed -i '0,/version/s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
-          sccache: 'true'
-          manylinux: auto
+          sccache: "true"
+          manylinux: manylinux_2_28
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-linux-${{ matrix.platform.target }}
           path: dist
@@ -72,23 +71,22 @@ jobs:
           - runner: ubuntu-latest
             target: armv7
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version-file: ".python-version"
       - name: Update version
         if: "startsWith(github.ref, 'refs/tags/')"
-        run:
-          sed -i '0,/version/s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
+        run: sed -i '0,/version/s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
-          sccache: 'true'
+          sccache: "true"
           manylinux: musllinux_1_2
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-musllinux-${{ matrix.platform.target }}
           path: dist
@@ -103,23 +101,22 @@ jobs:
           - runner: windows-latest
             target: x86
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version-file: ".python-version"
           architecture: ${{ matrix.platform.target }}
       - name: Update version
         if: "startsWith(github.ref, 'refs/tags/')"
-        run:
-          sed -i '0,/version/s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
+        run: sed -i '0,/version/s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
-          sccache: 'true'
+          sccache: "true"
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-windows-${{ matrix.platform.target }}
           path: dist
@@ -132,22 +129,21 @@ jobs:
           - runner: macos-14
             target: aarch64
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version-file: ".python-version"
       - name: Update version
         if: "startsWith(github.ref, 'refs/tags/')"
-        run:
-          sed -i '' '0,/version/s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
+        run: sed -i '' '0,/version/s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
           args: --release --out dist --find-interpreter
-          sccache: 'true'
+          sccache: "true"
       - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-macos-${{ matrix.platform.target }}
           path: dist
@@ -155,18 +151,17 @@ jobs:
   sdist:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Update version
         if: "startsWith(github.ref, 'refs/tags/')"
-        run:
-          sed -i '0,/version/s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
+        run: sed -i '0,/version/s/version = ".*"/version = "${{ github.ref_name }}"/' Cargo.toml
       - name: Build sdist
         uses: PyO3/maturin-action@v1
         with:
           command: sdist
           args: --out dist
       - name: Upload sdist
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheels-sdist
           path: dist
@@ -175,9 +170,9 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     if: "startsWith(github.ref, 'refs/tags/')"
-    needs: [linux, musllinux, windows, macos, sdist]
+    needs: [manylinux_2_28, musllinux, windows, macos, sdist]
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
       - name: Publish to PyPI
         uses: PyO3/maturin-action@v1
         with:

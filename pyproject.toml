@@ -1,23 +1,23 @@
 [build-system]
-requires = ["maturin>=1.8,<2.0"]
+requires = ["maturin>=1.15,<2.0"]
 build-backend = "maturin"
 
 [project]
 name = "falsa"
-license = "Apache 2.0"
+license = "WTFPL"
 description = "Unofficial Rust-based implementation of H2O benchmark dataset generation"
 maintainers = [
     { name = "Sem", email = "ssinchenko@apache.org" },
 ]
 readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dynamic = ["version"]
-dependencies = ["pyarrow", "typer", "numpy"]
+dependencies = ["pyarrow", "typer", "numpy", "typing-extensions"]
 
 [project.optional-dependencies]
 dev = ["ruff", "ipython"]

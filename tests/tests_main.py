@@ -9,9 +9,12 @@ CSV_FILE_NAME = "G1_1e7_1e7_100_0.csv"
 if __name__ == "__main__":
     command = ["falsa", "groupby", "--path-prefix", "./"]
     proc = Popen(command, stdout=PIPE, stderr=STDOUT)
-    res = proc.communicate()
+    outs, errs = proc.communicate()
     if not os.path.exists(CSV_FILE_NAME):
         sys.stdout.write("File was not generated! Aborting.")
+        sys.stdout.write("\nDebug info:\n")
+        sys.stdout.write(f"stdout:\n{outs}\n")
+        sys.stdout.write(f"stderr:\n{errs}")
         sys.stdout.flush()
         sys.exit(1)
 
